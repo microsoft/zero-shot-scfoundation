@@ -1,9 +1,8 @@
-# scFoundation Evals
+# Zero-shot scFoundation
 
 Here you can find the code written to evaluate the proposed foundation models in single cell RNA-seq - Geneformer ([pub](https://www.nature.com/articles/s41586-023-06139-9), [code](https://huggingface.co/ctheodoris/Geneformer)) and scGPT ([pub](https://www.biorxiv.org/content/10.1101/2023.04.30.538439v2), [code](https://github.com/bowang-lab/scGPT)).
 
 We report our findings in the preprint **Assessing the limits of zero-shot foundation models in single-cell biology**.
-
 
 ## Dependencies
 
@@ -17,14 +16,14 @@ GPUs supported by flash attention are:
 
 ### Conda / Mamba
 
-If you don't have access to Docker or Apptainer, you can install the dependencies using conda. To do so, you need to have conda installed on your machine. If you don't have it, you can install it from [here](https://docs.conda.io/en/latest/miniconda.html).
+You can install the dependencies using conda. To do so, you need to have conda installed on your machine. If you don't have it, you can install it from [here](https://docs.conda.io/en/latest/miniconda.html).
 
 I would strongly recommend using [mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html) instead of conda, since it is much faster, in my experience. If you are starting from scratch, i.e. don't have conda installed, you can install mamba instead of conda by following their guide [here](https://mamba.readthedocs.io/en/latest/mamba-installation.html#fresh-install-recommended).
 
 If you already have conda install and want to benefit from the speed and enhanced experience of mamba, you can do so by running:
 
 ```bash
-# install mamba in your base enviorment
+# install mamba in your base environment
 conda install -c conda-forge mamba
 ```
 
@@ -32,11 +31,14 @@ Be warned though, this is not a recommended way by the creators of mamba.
 
 *Note:* If you installed mamba from scratch, in all commands below you can replace `conda` with `mamba`. However, if you just installed mamba in your existing conda install use `mamba` only for creating the environment.
 
+#### 1. Installing conda environment
+
 ```bash
 # install conda environment from conda_env.yml file
 # in this step, you can use mamba instead of conda for speed
 conda env create -f envs/conda_env.yml
 ```
+
 To activate the environment, run:
 
 ```bash
@@ -44,7 +46,7 @@ To activate the environment, run:
 conda activate sc_foundation_evals
 ```
 
-**Installing scGPT**
+#### 2. Installing scGPT
 
 This can be tricky, as scGPT requires specific flash-attn version, and flash attention can be difficult to install. If you get any issues with installation, check out the instructions from the flash-attn authors [here](https://github.com/Dao-AILab/flash-attention#installation-and-features), but bear in mind that they have significantly updated their code with 2.0 release, so the instructions might not entirely work for this version.
 
@@ -57,20 +59,24 @@ pip install git+https://github.com/bowang-lab/scGPT.git@v0.1.6
 pip install wandb
 ```
 
-then, Geneformer
+#### 3. Installing Geneformer
 
 ```bash
 pip install git+https://huggingface.co/ctheodoris/Geneformer.git
 
 ```
-nd finally, install the `sc_foundation_evals` package
+
+#### 4. Installing `sc_foundation_evals` package
+
+And finally, we are ready to install the `sc_foundation_evals` package (the code to run evaluations on zero-shot scFoundation models) itself.
 
 ```bash
 cd sc_foundation_evals
 pip install .
 ```
 
-To run notebooks you also need to have the weights of the models downloaded. scGPT weights are avaialble [here](https://github.com/bowang-lab/scGPT#pretrained-scgpt-model-zoo) and Geneformer weights are available in their repository. As per the instructions in the Geneformer repository, make sure you have git lfs installed before downloading the weights via repository clonign.
+To run notebooks you also need to have the weights of the models downloaded. scGPT weights are avaialble [here](https://github.com/bowang-lab/scGPT#pretrained-scgpt-model-zoo) and Geneformer weights are available in its repository. As per the instructions in the Geneformer repository, make sure you have `git lfs` installed before downloading the weights via repository cloning.
+
 
 ```bash 
 # Make sure you have git-lfs installed (https://git-lfs.com)
@@ -78,6 +84,9 @@ git lfs install
 git clone https://huggingface.co/ctheodoris/Geneformer
 ```
 
+### Docker
+
+Support for docker is coming soon.
 
 ## Running the code
 
@@ -90,7 +99,7 @@ To best understand the code and it's organization, please have a look at the not
 
 ## Any questions?
 
-If you have any questions, or find any issues with the code, please open an issue in this repository. We also welcome any contributions to the code - be sure to checkout the **Contributing** section below.
+If you have any questions, or find any issues with the code, please open an issue in this repository. You can find more information on how to file an issue in [here](/SUPPORT.md). We also welcome any contributions to the code - be sure to checkout the **Contributing** section below.
 
 ## Contributing
 
