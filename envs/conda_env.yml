@@ -1,0 +1,18 @@
+name: sc_foundation_evals
+channels:
+  - pytorch
+  - nvidia/label/cuda-11.7.0
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - cuda==11.7.0
+  - pytorch==1.13.1
+  - torchvision==0.14.1
+  - torchaudio==0.13.1
+  - pytorch-cuda==11.7
+  - ninja
+  - rpy2
+  - packaging
+  - gxx==11.4
+  - git-lfs

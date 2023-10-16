@@ -1,0 +1,12 @@
+anndata==0.9.2
+colorlog==6.7.0
+scgpt==0.1.6
+geneformer==0.0.1
+PyComplexHeatmap
+numpy
+pandas
+scanpy
+scipy
+seaborn
+scib
+scvi-tools
