@@ -1,9 +1,11 @@
-# Zero-shot scFoundation
+# Foundation models in single-cell biology: evaluating zero-shot capabilities
 
-Here you can find the code written to evaluate the proposed foundation models in single cell RNA-seq - Geneformer ([pub](https://www.nature.com/articles/s41586-023-06139-9), [code](https://huggingface.co/ctheodoris/Geneformer)) and scGPT ([pub](https://www.biorxiv.org/content/10.1101/2023.04.30.538439v2), [code](https://github.com/bowang-lab/scGPT)).
+This repository contains the code that accompanies our paper, **Assessing the limits of zero-shot foundation models in single-cell biology**. You can find the preprint of the paper [here](https://www.biorxiv.org/content/10.1101/2021.09.27.462483v1).
 
-We report our findings in the preprint **Assessing the limits of zero-shot foundation models in single-cell biology**.
 
+## Project overview
+
+In this project, we assess two proposed foundation models in the context of single-cell RNA-seq: Geneformer ([pub](https://www.nature.com/articles/s41586-023-06139-9), [code](https://huggingface.co/ctheodoris/Geneformer)) and scGPT ([pub](https://www.biorxiv.org/content/10.1101/2023.04.30.538439v2), [code](https://github.com/bowang-lab/scGPT)). We focus on evaluating the zero-shot capabilities of these models, specifically their ability to generalize beyond their original training objectives. Our evaluation targets two main tasks: cell type clustering and batch integration. In these tasks, we compare the performance of Geneformer and scGPT against two baselines: scVI  ([pub](https://www.nature.com/articles/s41592-019-0619-0), [code](https://docs.scvi-tools.org/en/stable/user_guide/models/scvi.html) and a heuristic method that selects highly variable genes (HVGs). We also investigate the performence of the models in reconstructing the gene expression profiles of cells, and compare it against the baselines - such as a mean expression value or average ranking.
 ## Dependencies
 
 Currently the code requires the GPUs supported by flash attention, required for scGPT to run.
