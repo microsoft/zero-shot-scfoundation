@@ -18,7 +18,7 @@ GPUs supported by flash attention are:
 
 You can install the dependencies using conda. To do so, you need to have conda installed on your machine. If you don't have it, you can install it from [here](https://docs.conda.io/en/latest/miniconda.html).
 
-I would strongly recommend using [mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html) instead of conda, since it is much faster, in my experience. If you are starting from scratch, i.e. don't have conda installed, you can install mamba instead of conda by following their guide [here](https://mamba.readthedocs.io/en/latest/mamba-installation.html#fresh-install-recommended).
+We strongly recommend using [mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html) instead of conda, since it is much faster in our experience. If you are starting from scratch, i.e. don't have conda installed, you can install mamba instead of conda by following their guide [here](https://mamba.readthedocs.io/en/latest/mamba-installation.html#fresh-install-recommended).
 
 If you already have conda install and want to benefit from the speed and enhanced experience of mamba, you can do so by running:
 
@@ -52,9 +52,9 @@ This can be tricky, as scGPT requires specific flash-attn version, and flash att
 
 ```bash
 # make sure sc_foundation_evals env is activated
-# I find it easier to install flash attention first, and then scGPT
+# We have found it easier to install flash attention first, and then scGPT
 pip install flash-attn==11.0.4 --no-build-isolation
-# then I install v1.0.6 version of scGPT
+# then install v1.0.6 version of scGPT
 pip install git+https://github.com/bowang-lab/scGPT.git@v0.1.6
 pip install wandb
 ```
@@ -68,7 +68,7 @@ pip install git+https://huggingface.co/ctheodoris/Geneformer.git
 
 #### 4. Installing `sc_foundation_evals` package
 
-And finally, we are ready to install the `sc_foundation_evals` package (the code to run evaluations on zero-shot scFoundation models) itself.
+And finally, install the `sc_foundation_evals` package (the code to run evaluations on zero-shot scFoundation models) itself.
 
 ```bash
 cd sc_foundation_evals
