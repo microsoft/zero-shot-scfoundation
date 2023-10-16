@@ -1,3 +1,6 @@
+## Copyright (c) Microsoft Corporation.
+## Licensed under the MIT license.
+
 from typing import Dict, Union, List
 from anndata import AnnData
 import numpy as np

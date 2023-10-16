@@ -1,3 +1,6 @@
+## Copyright (c) Microsoft Corporation.
+## Licensed under the MIT license.
+
 def plot_side_by_side(df, label, col_palette=None, direction="row", 
                       title="UMAP projection of the dataset"):
     """

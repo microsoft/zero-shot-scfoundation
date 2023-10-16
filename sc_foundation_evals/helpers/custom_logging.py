@@ -1,3 +1,5 @@
+## Copyright (c) Microsoft Corporation.
+## Licensed under the MIT license.
 import logging
 # colorful logging
 from colorlog import ColoredFormatter
