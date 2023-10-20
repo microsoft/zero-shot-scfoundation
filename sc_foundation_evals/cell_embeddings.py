@@ -196,6 +196,10 @@ class CellEmbeddingsEval():
             log.warning(f"adata_ has {adata_.n_obs} cells. "
                         f"Taking a subset of {n_cells} cells.")
             sc.pp.subsample(adata_, n_obs = n_cells, copy = False)
+            # save the subsetted adata.obs
+            adata_.obs.to_csv(os.path.join(self.output_dir,
+                                             "adata_obs_subset.csv"))
+
 
         
         # make sure plot size is a tuple of numbers
