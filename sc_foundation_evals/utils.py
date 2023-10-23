@@ -4,6 +4,7 @@
 from typing import Dict, Union, List
 from anndata import AnnData
 import numpy as np
+import scanpy as sc
 import scib
 import torch
 import torch.nn.functional as F
@@ -19,6 +20,21 @@ def eval_scib_metrics(
     embedding_key: str = "X_scGPT"
 ) -> Dict:
     
+    # if adata.uns["neighbors"] exists, remove it to make sure the optimal 
+    # clustering is calculated for the correct embedding
+    # print a warning for the user
+    if "neighbors" in adata.uns:        
+        log.warning(f"neighbors in adata.uns found \n {adata.uns['neighbors']} "
+                    "\nto make sure the optimal clustering is calculated for the "
+                    "correct embedding, removing neighbors from adata.uns."
+                    "\nOverwriting calculation of neighbors with "
+                    f"sc.pp.neighbors(adata, use_rep={embedding_key}).")
+        adata.uns.pop("neighbors", None)
+        sc.pp.neighbors(adata, use_rep=embedding_key)
+        log.info("neighbors in adata.uns removed, new neighbors calculated: "
+                 f"{adata.uns['neighbors']}")
+
+
     # in case just one batch scib.metrics.metrics doesn't work 
     # call them separately
     results_dict = dict()
