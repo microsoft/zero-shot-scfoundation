@@ -114,7 +114,7 @@ def eval_scib_metrics(
         ]
     )
 
-    log.info(
+    log.debug(
         "\n".join([f"{k}: {v:.4f}" for k, v in results_dict.items()])
     )
 

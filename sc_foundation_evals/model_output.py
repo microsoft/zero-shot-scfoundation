@@ -183,6 +183,10 @@ class GeneExprPredEval():
         for j in range(n_cells):
             # Get the max positions for the current cell
             max_pos_in = len(in_rankings[j]) + 1
+
+            # only take a sequence as long as the input
+            out_rankings[j] = out_rankings[j][:len(in_rankings[j])]
+            
             max_pos_out = len(out_rankings[j]) + 1
             
             # Initialize to max position specific to the cell
@@ -199,6 +203,7 @@ class GeneExprPredEval():
                     in_ranks[i, j] = pos_in_in[0] + 1  # 1-based index
                 if pos_in_out.size > 0:
                     out_ranks[i, j] = np.rint(np.mean(pos_in_out)) + 1  # 1-based index
+                    
         log.debug("Finished populating tensors")
         # Convert to PyTorch tensors
         in_ranks = torch.tensor(in_ranks, dtype=torch.int)
@@ -213,9 +218,12 @@ class GeneExprPredEval():
                                self.output_dir,
                                "out_rankings.csv.gz")
 
-        # Get "percent_rank" equivalent 
-        in_ranks = (in_ranks.float() - 1) / (in_ranks.shape[0] - 1)
-        out_ranks = (out_ranks.float() - 1) / (out_ranks.shape[0] - 1)
+        # Get the ranking  
+        in_ranks = torch.max(in_ranks, dim=0)[0].expand_as(in_ranks) - in_ranks.float()
+        in_ranks = in_ranks / torch.max(in_ranks, dim=0)[0].expand_as(in_ranks)
+        out_ranks = torch.max(out_ranks, dim=0)[0].expand_as(out_ranks) - out_ranks.float()
+        out_ranks = out_ranks / torch.max(out_ranks, dim=0)[0].expand_as(out_ranks)
+        
         # calculate mean ranks across cells
         mean_ranks = torch.mean(in_ranks, dim = 1)
         mean_ranks = mean_ranks.repeat(in_ranks.shape[1], 1).T
@@ -242,6 +250,9 @@ class GeneExprPredEval():
                                             mean_corrs.mean().item()]},
                             index = ["geneformer_out", "mean_rankiing"])
         
+        # save the metrics
+        metrics_df.to_csv(os.path.join(self.output_dir, 
+                                       "gene_embeddings_metrics.csv"))
         # log the metrics to wandb
         if self._wandb:
             self._wandb.log({"gene_embeddings_metrics": 
@@ -322,19 +333,20 @@ class GeneExprPredEval():
         """
 
         if self.model_type == "scgpt":
-            self._evaluate_scGPT(remove_cell_embedding = remove_cell_embedding,
-                                 include_zero_genes = include_zero_genes)
+            return self._evaluate_scGPT(remove_cell_embedding = remove_cell_embedding,
+                                        include_zero_genes = include_zero_genes)
         
         elif self.model_type == "geneformer":
-            self._evaluate_Geneformer(n_cells = n_cells,
-                                      return_all = return_all,
-                                      save_rankings = save_rankings)
+            return self._evaluate_Geneformer(n_cells = n_cells,
+                                             return_all = return_all,
+                                             save_rankings = save_rankings)
             
            
     
     def _visualize_Geneformer(self, 
-                              n_cells: Optional[int] = 1000) -> plt.figure:
-        # TODO: do it in R, this is too slow and not as good
+                              n_cells: Optional[int] = 1000, 
+                              cmap = "Bues") -> plt.figure:
+
         n_all_available_cells = self.in_ranks.shape[1]
         n_cells = n_all_available_cells if n_cells is None else n_cells
 
@@ -356,6 +368,12 @@ class GeneExprPredEval():
             out_ranks = self.out_ranks.flatten()
             mean_ranks = self.mean_ranks.flatten()
 
+        # remove the genes absent in input and output ranks
+        subset_non_zero = torch.logical_or(in_ranks > 0, out_ranks > 0)
+        in_ranks = in_ranks[subset_non_zero]
+        out_ranks = out_ranks[subset_non_zero]
+        mean_ranks = mean_ranks[subset_non_zero]
+
         # set seaborn style
         sns.set_style("white")
 
@@ -372,11 +390,14 @@ class GeneExprPredEval():
 
         sns.kdeplot(x = in_ranks, 
                     y = out_ranks, 
-                    cmap = "viridis", 
-                    fill = True, thresh = 0, ax = ax1)
+                    cmap = cmap,
+                    fill = True, 
+                    shade = True,
+                    thresh = 0, ax = ax1)
         sns.kdeplot(x = in_ranks, 
                     y = mean_ranks, 
-                    cmap = "viridis",  
+                    cmap = cmap,  
+                    shade = True,
                     fill = True, thresh = 0, ax = ax2)
         
         plt.suptitle("Correlation between input and reconstructed and mean rankings")
@@ -469,14 +490,14 @@ class GeneExprPredEval():
     def visualize(self,
                   n_cells: Optional[int] = 1000,
                   label_key: Optional[str] = "cell_type",
-                  skip_cell: Optional[bool] = True) -> None:
+                  skip_cell: Optional[bool] = True, **kwargs) -> None:
         
         if self.model_type == "scgpt":
             self._visualize_scGPT(label_key = label_key,
                                   skip_cell = skip_cell)
         
         elif self.model_type == "geneformer":
-            self._visualize_Geneformer(n_cells = n_cells)
+            self._visualize_Geneformer(n_cells = n_cells, **kwargs)
 
 
     @staticmethod
