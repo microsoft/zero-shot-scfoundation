@@ -345,7 +345,7 @@ class GeneExprPredEval():
     
     def _visualize_Geneformer(self, 
                               n_cells: Optional[int] = 1000, 
-                              cmap = "Bues") -> plt.figure:
+                              cmap = "Blues") -> plt.figure:
 
         n_all_available_cells = self.in_ranks.shape[1]
         n_cells = n_all_available_cells if n_cells is None else n_cells
