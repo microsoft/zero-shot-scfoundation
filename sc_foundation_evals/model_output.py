@@ -21,6 +21,8 @@ import seaborn as sns
 
 import PyComplexHeatmap as pych
 
+import scipy.stats as stats
+
 import warnings
 os.environ["KMP_WARNINGS"] = "off"
 warnings.filterwarnings('ignore')
@@ -56,23 +58,30 @@ def save_tensor_as_csv(tensor: torch.Tensor,
     tensor_df.to_csv(os.path.join(output_dir, filename))
 
 
-def columnwise_correlation(tensor1, tensor2):
-    # Calculate means along each column
-    mean1 = torch.mean(tensor1, dim=0)
-    mean2 = torch.mean(tensor2, dim=0)
+def calculate_correlation(in_ranks_mat, out_ranks_mat, mean_ranks_mat):
     
-    # Subtract means from each element in the column (broadcasted automatically)
-    diff1 = tensor1 - mean1
-    diff2 = tensor2 - mean2
+    # throw an error if the matrices are not the same shape
+    if not (in_ranks_mat.shape == out_ranks_mat.shape == mean_ranks_mat.shape):
+        msg = (f"Input ranks matrix shape: {in_ranks_mat.shape}, "
+               f"Output ranks matrix shape: {out_ranks_mat.shape}, "
+               f"Mean ranks matrix shape: {mean_ranks_mat.shape}")
+        log.error(msg)
+        raise ValueError(msg)
     
-    # Calculate Pearson correlation for each pair of columns
-    numerator = torch.sum(diff1 * diff2, dim=0)
-    denominator = torch.sqrt(torch.sum(diff1 ** 2, dim=0) * torch.sum(diff2 ** 2, dim=0))
+    cors_list = []
+    mean_cors_list = []
+    for i in range(in_ranks_mat.shape[1]):
+        in_rank = in_ranks_mat[:,i]
+        out_rank = out_ranks_mat[:,i]
+        mean_rank = mean_ranks_mat[:,i]
+        keep = np.logical_or(in_rank > 0, out_rank > 0)
+        in_rank = in_rank[keep]
+        out_rank = out_rank[keep]
+        mean_rank = mean_rank[keep]
+        cors_list.append(stats.pearsonr(in_rank, out_rank)[0])
+        mean_cors_list.append(stats.pearsonr(in_rank, mean_rank)[0])
     
-    # Prevent division by zero and calculate correlation
-    correlation = torch.where(denominator != 0, numerator / denominator, torch.zeros_like(denominator))
-    
-    return correlation
+    return cors_list, mean_cors_list
 
 
 class GeneExprPredEval():
@@ -155,112 +164,114 @@ class GeneExprPredEval():
             log.error(msg)
             raise ValueError(msg)
         
-        log.debug(f"Extracting output from {n_cells} cells")
-        
+
         if n_cells < n_all_cells:
             rand_cells = np.random.choice(range(n_all_cells), 
                                           n_cells, replace = False)
-            in_rankings = [self.eval_instance.input_rankings[i] 
-                           for i in rand_cells]
-            out_rankings = [self.eval_instance.output_rankings[i] 
-                            for i in rand_cells]
+            input_rankings = [self.eval_instance.input_rankings[i] 
+                              for i in rand_cells]
+            output_rankings = [self.eval_instance.output_rankings[i] 
+                               for i in rand_cells]
+
+            output_rankings = [output_rankings[i][:len(input_rankings[i])]
+                               for i in range(len(input_rankings))]
 
         else:
-            in_rankings = self.eval_instance.input_rankings
-            out_rankings = self.eval_instance.output_rankings
+            input_rankings = self.eval_instance.input_rankings
+            output_rankings = [self.eval_instance.output_rankings[i][:len(input_rankings[i])] 
+                               for i in range(len(input_rankings))]
 
-        # Find unique tokens across all arrays
-        unique_tokens = np.unique(np.concatenate(in_rankings + out_rankings))
-        # Number of unique tokens and cells
-        n_tokens = len(unique_tokens)
+        log.debug(f"Extracting output from {n_cells} cells")
         
-        # Initialize tensors with zeros (will fill in actual values later)
-        in_ranks = np.zeros((n_tokens, n_cells))
-        out_ranks = np.zeros((n_tokens, n_cells))
-
-        log.debug("Populating tensors with actual positions")
-        # Populate tensors with actual positions
-        for j in range(n_cells):
-            # Get the max positions for the current cell
-            max_pos_in = len(in_rankings[j]) + 1
-
-            # only take a sequence as long as the input
-            out_rankings[j] = out_rankings[j][:len(in_rankings[j])]
+        # if 'adata_order' is not in the datset, generate numbers
+        if 'adata_order' not in self.eval_instance.tokenized_dataset.features.keys():
+            msg = "adata_order is not in the dataset; generating numbers for sample_id"
+            log.warning(msg)
             
-            max_pos_out = len(out_rankings[j]) + 1
-            
-            # Initialize to max position specific to the cell
-            in_ranks[:, j] = max_pos_in
-            out_ranks[:, j] = max_pos_out
-            
-            for i, token in enumerate(unique_tokens):
-                pos_in_in = np.where(in_rankings[j] == token)[0]
-                # the question here is wether the token apears multiple times
-                # run a notebook and look at the outputs
-                pos_in_out = np.where(out_rankings[j] == token)[0]
+            sample_ids = [[i] * input_rankings[i].shape[0]
+                          for i in range(len(input_rankings))]
+        else:
+            sample_ids = [self.eval_instance.tokenized_dataset.select([i])['adata_order']
+                           for i in rand_cells]
+            sample_ids = [sample_ids[i] * input_rankings[i].shape[0]
+                           for i in range(len(input_rankings))]
 
-                if pos_in_in.size > 0:
-                    in_ranks[i, j] = pos_in_in[0] + 1  # 1-based index
-                if pos_in_out.size > 0:
-                    out_ranks[i, j] = np.rint(np.mean(pos_in_out)) + 1  # 1-based index
-                    
-        log.debug("Finished populating tensors")
-        # Convert to PyTorch tensors
-        in_ranks = torch.tensor(in_ranks, dtype=torch.int)
-        out_ranks = torch.tensor(out_ranks, dtype=torch.int)
+        positions = [np.arange(input_rankings[i].shape[0])
+                     for i in range(len(input_rankings))]
+        positions = [np.max(positions[i]) - positions[i] 
+                     for i in range(len(input_rankings))]
+        positions = [positions[i] / np.max(positions[i]) 
+                     for i in range(len(input_rankings))]
+
+        input_rankings = np.concatenate(input_rankings, axis = 0)
+        sample_ids = np.concatenate(sample_ids, axis = 0)
+        output_rankings = np.concatenate(output_rankings, axis = 0)
+        positions = np.concatenate(positions, axis = 0)
+
+        # create the tables
+        input_df = pd.DataFrame({"token": input_rankings,
+                                 "sample_id": sample_ids,
+                                 "input_rank": positions})
+
+        output_df = pd.DataFrame({"token": output_rankings,
+                                  "sample_id": sample_ids,
+                                  "output_rank": positions})
+        
+        # since the output can contain more than one occurrence of a token average
+        output_df = output_df.groupby(["token", "sample_id"]).mean().reset_index()
+
+        # join the two dataframes
+        df = pd.merge(input_df, output_df, 
+                      on = ["token", "sample_id"], 
+                      how = "outer")
+        
+        # fill nas with 0 for tokens absent from input and output
+        df = df.fillna(0)
+
+        # calculate mean rank for each token
+        mean_rank_df = df[df['input_rank'] > 0].groupby(["token"]).apply(lambda x: x.input_rank.mean()).reset_index()
+        # rename the column
+        mean_rank_df = mean_rank_df.rename(columns = {0: "mean_rank"})
+
+        # merge dataframes
+        df = pd.merge(df, mean_rank_df, on = ["token"], how = "left")
+
+        # fill nas with 0 for tokens absent from input
+        df = df.fillna(0)
+
+        # calculate correlation with stats.pearsonr for each sample between input and output rankings
+        cors = df.groupby("sample_id").apply(lambda x: stats.pearsonr(x["input_rank"], x["output_rank"])[0])
+        mean_cors = df.groupby("sample_id").apply(lambda x: stats.pearsonr(x["input_rank"], x["mean_rank"])[0])
+
+        cors_df = pd.concat([cors, mean_cors], axis = 1)
+        cors_df = cors_df.rename(columns = {0: "correlation", 
+                                            1: "mean_correlation"})
+
+        self.rankings_df = df
 
         if save_rankings:
-            # save tensor as csv
-            save_tensor_as_csv(in_ranks,
-                               self.output_dir,
-                               "input_rankings.csv.gz")
-            save_tensor_as_csv(out_ranks,
-                               self.output_dir,
-                               "out_rankings.csv.gz")
-
-        # Get the ranking  
-        in_ranks = torch.max(in_ranks, dim=0)[0].expand_as(in_ranks) - in_ranks.float()
-        in_ranks = in_ranks / torch.max(in_ranks, dim=0)[0].expand_as(in_ranks)
-        out_ranks = torch.max(out_ranks, dim=0)[0].expand_as(out_ranks) - out_ranks.float()
-        out_ranks = out_ranks / torch.max(out_ranks, dim=0)[0].expand_as(out_ranks)
+            df.to_csv(os.path.join(self.output_dir,
+                                    "rankings.csv.gz"),
+                        index = False,
+                        compression = "gzip")
         
-        # calculate mean ranks across cells
-        mean_ranks = torch.mean(in_ranks, dim = 1)
-        mean_ranks = mean_ranks.repeat(in_ranks.shape[1], 1).T
+        metrics_df = cors_df.describe()
 
-        self.in_ranks = in_ranks
-        self.out_ranks = out_ranks
-        self.mean_ranks = mean_ranks
+        self.rankings_summary_df = metrics_df
 
-        if save_rankings:
-            save_tensor_as_csv(in_ranks,
-                               self.output_dir,
-                               "input_scaled_rankings.csv.gz")
-            save_tensor_as_csv(out_ranks,
-                               self.output_dir,
-                               "output_scaled_rankings.csv.gz")
-            save_tensor_as_csv(mean_ranks,
-                               self.output_dir,
-                               "mean_rankings.csv.gz")
-
-        corrs = columnwise_correlation(in_ranks, out_ranks)
-        mean_corrs = columnwise_correlation(in_ranks, mean_ranks)
-        
-        metrics_df = pd.DataFrame({"corr": [corrs.mean().item(), 
-                                            mean_corrs.mean().item()]},
-                            index = ["geneformer_out", "mean_rankiing"])
-        
-        # save the metrics
-        metrics_df.to_csv(os.path.join(self.output_dir, 
-                                       "gene_embeddings_metrics.csv"))
         # log the metrics to wandb
         if self._wandb:
             self._wandb.log({"gene_embeddings_metrics": 
                              self._wandb.Table(dataframe = metrics_df)})
-            
-        if return_all:
-            return metrics_df, corrs, mean_corrs
 
+
+        if return_all:
+            cors_df.to_csv(os.path.join(self.output_dir,
+                                        "correlations.csv.gz"),
+                            index = False,
+                            compression = "gzip") 
+            return metrics_df, cors_df
+            
         return metrics_df
 
 
@@ -347,36 +358,24 @@ class GeneExprPredEval():
                               n_cells: Optional[int] = 1000, 
                               cmap = "Blues") -> plt.figure:
 
-        n_all_available_cells = self.in_ranks.shape[1]
-        n_cells = n_all_available_cells if n_cells is None else n_cells
+        n_all_available_cells = self.rankings_df['sample_id'].nunique()
 
         if n_cells < n_all_available_cells:
             msg = f"Subsetting to {n_cells} cells"
             log.info(msg)
             # select random cells
-            rand_cells = np.random.choice(range(n_all_available_cells),
-                                            n_cells, replace=False)
-            in_ranks = self.in_ranks[:, rand_cells].flatten()
-            out_ranks = self.out_ranks[:, rand_cells].flatten()
-            mean_ranks = self.mean_ranks[:, rand_cells].flatten()
+            rand_cells = np.random.choice(self.rankings_df['sample_id'].unique(),
+                                          n_cells, replace=False)
+            rankings_df = self.rankings_df[self.rankings_df['sample_id'].isin(rand_cells)]
         elif n_cells < 1:
             msg = f"n_cells must be greater than 0; provided: {n_cells}"
             log.error(msg)
             raise ValueError(msg)
         else:    
-            in_ranks = self.in_ranks.flatten()
-            out_ranks = self.out_ranks.flatten()
-            mean_ranks = self.mean_ranks.flatten()
-
-        # remove the genes absent in input and output ranks
-        subset_non_zero = torch.logical_or(in_ranks > 0, out_ranks > 0)
-        in_ranks = in_ranks[subset_non_zero]
-        out_ranks = out_ranks[subset_non_zero]
-        mean_ranks = mean_ranks[subset_non_zero]
+            rankings_df = self.rankings_df
 
         # set seaborn style
         sns.set_style("white")
-
 
         # get two plots side by side
         fig, (ax1, ax2) = plt.subplots(ncols = 2, 
@@ -388,14 +387,16 @@ class GeneExprPredEval():
         ax2.set_xlabel("Input ranks")
         ax2.set_ylabel("Mean ranks")
 
-        sns.kdeplot(x = in_ranks, 
-                    y = out_ranks, 
+        sns.kdeplot(x = "input_rank", 
+                    y = "output_rank", 
+                    data = rankings_df,
                     cmap = cmap,
                     fill = True, 
                     shade = True,
                     thresh = 0, ax = ax1)
-        sns.kdeplot(x = in_ranks, 
-                    y = mean_ranks, 
+        sns.kdeplot(x = "input_rank", 
+                    y = "mean_rank",
+                    data = rankings_df, 
                     cmap = cmap,  
                     shade = True,
                     fill = True, thresh = 0, ax = ax2)
