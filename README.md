@@ -1,6 +1,8 @@
 # Foundation models in single-cell biology: evaluating zero-shot capabilities
 
-This repository contains the code that accompanies our paper, **Assessing the limits of zero-shot foundation models in single-cell biology**. You can find the preprint of the paper [here](https://www.biorxiv.org/content/10.1101/2023.10.16.561085v1).
+[![DOI](https://badgen.net/badge/DOI/10.1101%2F2023.10.16.561085/red)](https://www.biorxiv.org/content/10.1101/2023.10.16.561085) [![DOI](https://badgen.net/badge/figshare/10.6084%2Fm9.figshare.24747228/green)](https://doi.org/10.6084/m9.figshare.24747228)
+
+This repository contains the code that accompanies our paper, **Assessing the limits of zero-shot foundation models in single-cell biology**. You can find the preprint of the paper [here](https://www.biorxiv.org/content/10.1101/2023.10.16.561085).
 
 
 ## Project overview
@@ -16,6 +18,8 @@ GPUs supported by flash attention are:
 - Turing GPUs (T4, RTX 2080)
 
 ## Installation
+
+The amount of time that the installation takes depends on (1) whether you chose mamba over conda (former is much faster in my experience), (2) how many dependencies are already present in your environment, (3) the speed of your internet connection, and (4) the speed of your machine. The following steps, took me about 1 hour to complete on a remote HPC with fast internet connection.
 
 ### Conda / Mamba
 
@@ -92,6 +96,25 @@ git clone https://huggingface.co/ctheodoris/Geneformer
 Support for docker is coming soon.
 
 ## Running the code
+
+### Copying this repository
+
+To run the code, you need to clone this repository.
+
+```bash
+git clone https://github.com/microsoft/zero-shot-scfoundation
+```
+
+And download and unpack the data, stored at figshare (see [here](https://doi.org/10.6084/m9.figshare.24747228) for more details).
+
+```bash
+cd zero-shot-scfoundation
+# download and unpack the data
+wget https://figshare.com/ndownloader/files/43480497 -O data.zip
+unzip data.zip && rm data.zip
+```
+
+### Notebooks
 
 To best understand the code and it's organization, please have a look at the notebooks. The `notebooks` directory currently contains the following notebooks:
 

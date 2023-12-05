@@ -6,8 +6,11 @@ __pycache__/
 *.pyo
 *.egg-info/
 
-# Jupyter Notebook
-*.ipynb_checkpoints/
+# Output folder with outputs of notebooks
+output/
+
+# Data should be downloaded from Zenodo, not stored in the repository
+data/
 
 # Build directory
 build/
