@@ -119,7 +119,7 @@ unzip data.zip && rm data.zip
 To best understand the code and it's organization, please have a look at the notebooks. The `notebooks` directory currently contains the following notebooks:
 
 - [scGPT_zero_shot](notebooks/scGPT_zero_shot.ipynb) - notebook for running scGPT zero-shot evaluation
-- [Geneformer_zero_shot](notebooks/Geneformer_zero_shot.ipynb.ipynb) - notebook for running Geneformer zero-shot evaluation
+- [Geneformer_zero_shot](notebooks/Geneformer_zero_shot.ipynb) - notebook for running Geneformer zero-shot evaluation
 - [Baselines_HVG_and_scVI](notebooks/Baselines_HVG_and_scVI.ipynb) - notebook for running the baselines used in the paper, i.e. HVG and scVI.
 
 
