@@ -60,7 +60,7 @@ This can be tricky, as scGPT requires specific flash-attn version, and flash att
 ```bash
 # make sure sc_foundation_evals env is activated
 # We have found it easier to install flash attention first, and then scGPT
-pip install flash-attn==11.0.4 --no-build-isolation
+pip install flash-attn==1.0.4 --no-build-isolation
 # then install v1.0.6 version of scGPT
 pip install git+https://github.com/bowang-lab/scGPT.git@v0.1.6
 pip install wandb
