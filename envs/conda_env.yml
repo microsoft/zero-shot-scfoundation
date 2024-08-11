@@ -16,3 +16,6 @@ dependencies:
   - packaging
   - gxx==11.4
   - git-lfs
+  - pip:
+    - colorlog
+    - PyComplexHeatmap
