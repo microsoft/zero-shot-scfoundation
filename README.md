@@ -4,7 +4,6 @@
 
 This repository contains the code that accompanies our paper, **Assessing the limits of zero-shot foundation models in single-cell biology**. You can find the preprint of the paper [here](https://www.biorxiv.org/content/10.1101/2023.10.16.561085).
 
-
 ## Project overview
 
 In this project, we assess two proposed foundation models in the context of single-cell RNA-seq: Geneformer ([pub](https://www.nature.com/articles/s41586-023-06139-9), [code](https://huggingface.co/ctheodoris/Geneformer)) and scGPT ([pub](https://www.biorxiv.org/content/10.1101/2023.04.30.538439v2), [code](https://github.com/bowang-lab/scGPT)). We focus on evaluating the zero-shot capabilities of these models, specifically their ability to generalize beyond their original training objectives. Our evaluation targets two main tasks: cell type clustering and batch integration. In these tasks, we compare the performance of Geneformer and scGPT against two baselines: scVI  ([pub](https://www.nature.com/articles/s41592-018-0229-2), [code](https://docs.scvi-tools.org/en/stable/user_guide/models/scvi.html)) and a heuristic method that selects highly variable genes (HVGs). We also investigate the performence of the models in reconstructing the gene expression profiles of cells, and compare it against the baselines - such as a mean expression value or average ranking.
@@ -14,6 +13,7 @@ In this project, we assess two proposed foundation models in the context of sing
 Currently the code requires the GPUs supported by flash attention, required for scGPT to run.
 
 GPUs supported by flash attention are:
+
 - Ampere, Ada, or Hopper GPUs (e.g., A100, RTX 3090, RTX 4090, H100).
 - Turing GPUs (T4, RTX 2080)
 
@@ -53,6 +53,12 @@ To activate the environment, run:
 conda activate sc_foundation_evals
 ```
 
+If you encounter error at this point try:
+
+```bash
+pip3 install torch==1.13 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+```
+
 #### 2. Installing scGPT
 
 This can be tricky, as scGPT requires specific flash-attn version, and flash attention can be difficult to install. If you get any issues with installation, check out the instructions from the flash-attn authors [here](https://github.com/Dao-AILab/flash-attention#installation-and-features), but bear in mind that they have significantly updated their code with 2.0 release, so the instructions might not entirely work for this version.
@@ -69,7 +75,7 @@ pip install wandb
 #### 3. Installing Geneformer
 
 ```bash
-pip install git+https://huggingface.co/ctheodoris/Geneformer.git
+pip install git+https://huggingface.co/ctheodoris/Geneformer.git@5d0082c1e188ab88997efa87891414fdc6e4f6ff
 
 ```
 
@@ -84,8 +90,7 @@ pip install .
 
 To run notebooks you also need to have the weights of the models downloaded. scGPT weights are avaialble [here](https://github.com/bowang-lab/scGPT#pretrained-scgpt-model-zoo) and Geneformer weights are available in its repository. As per the instructions in the Geneformer repository, make sure you have `git lfs` installed before downloading the weights via repository cloning.
 
-
-```bash 
+```bash
 # Make sure you have git-lfs installed (https://git-lfs.com)
 git lfs install
 git clone https://huggingface.co/ctheodoris/Geneformer
@@ -122,7 +127,6 @@ To best understand the code and it's organization, please have a look at the not
 - [Geneformer_zero_shot](notebooks/Geneformer_zero_shot.ipynb) - notebook for running Geneformer zero-shot evaluation
 - [Baselines_HVG_and_scVI](notebooks/Baselines_HVG_and_scVI.ipynb) - notebook for running the baselines used in the paper, i.e. HVG and scVI.
 
-
 ## Any questions?
 
 If you have any questions, or find any issues with the code, please open an issue in this repository. You can find more information on how to file an issue in [here](/SUPPORT.md). We also welcome any contributions to the code - be sure to checkout the **Contributing** section below.
@@ -131,7 +135,7 @@ If you have any questions, or find any issues with the code, please open an issu
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
 
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
@@ -143,8 +147,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
