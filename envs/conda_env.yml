@@ -17,5 +17,15 @@ dependencies:
   - gxx==11.4
   - git-lfs
   - pip:
-    - colorlog
+    - --index-url https://download.pytorch.org/whl/cu117
+    - torch==1.13
+    - torchvision
+    - torchaudio
+    - wandb
+    - colorlog 
     - PyComplexHeatmap
+    - scib[kBET,rpy2]==1.0.4
+    - git+https://github.com/bowang-lab/scGPT.git@v0.1.6
+    - git+https://huggingface.co/ctheodoris/Geneformer.git@5d0082c1e188ab88997efa87891414fdc6e4f6ff
+    - git+https://github.com/microsoft/zero-shot-scfoundation
+
