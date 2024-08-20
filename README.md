@@ -22,11 +22,14 @@ GPUs supported by flash attention are:
 
 This code has been tested with the following versions of the packages:
 
-- Python 3.9
-- PyTorch 1.13
-- CUDA 11.7
-- 
-
+- Python `3.9`
+- PyTorch `1.13`
+- CUDA `11.7`
+- [FlashAttention](https://github.com/Dao-AILab/flash-attention/tree/v1.0.4) `v1.0.4`
+- [scGPT](https://github.com/bowang-lab/scGPT/tree/v0.1.6) `v0.1.6`
+- [Geneformer](https://huggingface.co/ctheodoris/Geneformer/tree/5d0082c1e188ab88997efa87891414fdc6e4f6ff) commit `5d0082c`
+- [scIB](https://github.com/theislab/scib/tree/v1.0.4) `v1.0.4`
+- [sc_foundation_evals](https://github.com/microsoft/zero-shot-scfoundation) `v0.1.0`
 
 </details>
 
