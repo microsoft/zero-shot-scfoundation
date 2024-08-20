@@ -6,11 +6,10 @@ channels:
   - bioconda
   - defaults
 dependencies:
+  - python==3.9
   - cuda==11.7.0
-  - pytorch==1.13.1
-  - torchvision==0.14.1
-  - torchaudio==0.13.1
-  - pytorch-cuda==11.7
+  - cuda-nvcc==11.7
+  - cudatoolkit==11.7
   - ninja
   - rpy2
   - packaging
@@ -25,6 +24,7 @@ dependencies:
     - colorlog 
     - PyComplexHeatmap
     - scib[kBET,rpy2]==1.0.4
+    - flashflash-attn==1.0.4 --no-build-isolation
     - git+https://github.com/bowang-lab/scGPT.git@v0.1.6
     - git+https://huggingface.co/ctheodoris/Geneformer.git@5d0082c1e188ab88997efa87891414fdc6e4f6ff
     - git+https://github.com/microsoft/zero-shot-scfoundation
