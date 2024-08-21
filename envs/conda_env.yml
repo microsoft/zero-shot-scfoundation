@@ -1,31 +1,21 @@
-name: sc_foundation_evals
+name: sc_foundation_evals__test
 channels:
-  - pytorch
   - nvidia/label/cuda-11.7.0
   - conda-forge
   - bioconda
   - defaults
 dependencies:
-  - python==3.9
-  - cuda==11.7.0
-  - cuda-nvcc==11.7
-  - cudatoolkit==11.7
+  - python=3.10
+  - cudatoolkit
+  - r-base=4.2.3
   - ninja
   - rpy2
   - packaging
-  - gxx==11.4
+  - gxx=11.4
   - git-lfs
+  - pip>=21.1
   - pip:
     - --index-url https://download.pytorch.org/whl/cu117
     - torch==1.13
     - torchvision
     - torchaudio
-    - wandb
-    - colorlog 
-    - PyComplexHeatmap
-    - scib[kBET,rpy2]==1.0.4
-    - flashflash-attn==1.0.4 --no-build-isolation
-    - git+https://github.com/bowang-lab/scGPT.git@v0.1.6
-    - git+https://huggingface.co/ctheodoris/Geneformer.git@5d0082c1e188ab88997efa87891414fdc6e4f6ff
-    - git+https://github.com/microsoft/zero-shot-scfoundation
-
