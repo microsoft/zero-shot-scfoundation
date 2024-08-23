@@ -4,7 +4,7 @@ set -e
 
 _script_name=$(basename "$0")
 
-ENV_NAME="sc_foundation_evals__test"
+ENV_NAME="sc_foundation_evals"
 
 warning() {
   yellow='\033[0;33m'
@@ -56,7 +56,7 @@ else
 fi
 msg "Using '${conda_cli}' as the Conda CLI."
 
-${conda_cli} env create -f conda_env.yml
+${conda_cli} env create -f envs/conda_env.yml
 success "Conda environment '${ENV_NAME}' created successfully."
 
 ${conda_cli} run \
@@ -69,8 +69,8 @@ ${conda_cli} run \
   error "Failed to install the wandb, colorlog, PyComplexHeatmap or scib."
 
 ${conda_cli} run \
-  -n ${ENV_NAME} pip install git+https://github.com/bowang-lab/scGPT.git@v0.1.6 || \ 
-error "Failed to install the scGPT."
+  -n ${ENV_NAME} pip install git+https://github.com/bowang-lab/scGPT.git@v0.1.6 ||
+  error "Failed to install the scGPT."
 
 ${conda_cli} run \
   -n ${ENV_NAME} pip install \
