@@ -1,4 +1,4 @@
-name: sc_foundation_evals__test
+name: sc_foundation_evals
 channels:
   - nvidia/label/cuda-11.7.0
   - conda-forge

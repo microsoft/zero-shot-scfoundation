@@ -56,7 +56,8 @@ else
 fi
 msg "Using '${conda_cli}' as the Conda CLI."
 
-${conda_cli} env create -f envs/conda_env.yml
+${conda_cli} env create -f envs/conda_env.yml -n ${ENV_NAME} ||
+  error "Failed to create the Conda environment '${ENV_NAME}'."
 success "Conda environment '${ENV_NAME}' created successfully."
 
 ${conda_cli} run \
@@ -64,7 +65,7 @@ ${conda_cli} run \
 success "Flash attention installed successfully."
 
 ${conda_cli} run \
-  -n ${ENV_NAME} pip install wandb colorlog \
+  -n ${ENV_NAME} pip install 'setuptools>=65.2' wandb colorlog \
   PyComplexHeatmap scib[kBET,rpy2]==1.0.4 ||
   error "Failed to install the wandb, colorlog, PyComplexHeatmap or scib."
 
