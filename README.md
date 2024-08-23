@@ -22,13 +22,13 @@ GPUs supported by flash attention are:
 
 This code has been tested with the following versions of the packages:
 
-- Python `3.9`
-- PyTorch `1.13`
-- CUDA `11.7`
-- [FlashAttention](https://github.com/Dao-AILab/flash-attention/tree/v1.0.4) `v1.0.4`
-- [scGPT](https://github.com/bowang-lab/scGPT/tree/v0.1.6) `v0.1.6`
-- [Geneformer](https://huggingface.co/ctheodoris/Geneformer/tree/5d0082c1e188ab88997efa87891414fdc6e4f6ff) commit `5d0082c`
-- [scIB](https://github.com/theislab/scib/tree/v1.0.4) `v1.0.4`
+- Python - tested with `3.9`
+- PyTorch - tested with - `1.13`
+- CUDA - tested with `11.7`
+- [FlashAttention](https://github.com/Dao-AILab/flash-attention/tree/v1.0.4) - depends on `v1.0.4`
+- [scGPT](https://github.com/bowang-lab/scGPT/tree/v0.1.6) - depends on `v0.1.6`
+- [Geneformer](https://huggingface.co/ctheodoris/Geneformer/tree/5d0082c1e188ab88997efa87891414fdc6e4f6ff) - depends on commit `5d0082c`
+- [scIB](https://github.com/theislab/scib/tree/v1.0.4) - tested with `v1.0.4`
 - [sc_foundation_evals](https://github.com/microsoft/zero-shot-scfoundation) `v0.1.0`
 
 </details>
@@ -46,20 +46,24 @@ You can install the dependencies using conda. To do so, you need to have conda i
 
 We recommend using [mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html), since it is faster in our experience. You can install mamba following the guide [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html#operating-system-package-managers).
 
+To simplify installation, we provide the installation script that creates a new conda environment with all the dependencies installed. You can run the following command to create the environment:
+
 ```bash
-# to install dependencies run the following command
-# if you have mamba installed, replace `conda` with `mamba`
-conda env create -f envs/conda_env.yml
+bash envs/install.sh
 ```
 
-To activate the environment, run:
+If the installation is successful, you will see the following message:
+
+```console
+2024-08-22 19:49:26 SUCCESS: All packages installed successfully.
+```
+
+And you can activate the environment by running:
 
 ```bash
-# if you have mamba installed, replace `conda` with `mamba`
 conda activate sc_foundation_evals
 ```
 
-To run notebooks you also need to have the weights of the models downloaded. scGPT weights are avaialble [here](https://github.com/bowang-lab/scGPT#pretrained-scgpt-model-zoo) and Geneformer weights are available in its repository. As per the instructions in the Geneformer repository, make sure you have `git lfs` installed before downloading the weights via repository cloning.
 </details>
 
 <details>
@@ -75,15 +79,36 @@ docker pull kzkedzierska/sc_foundation_evals
 
 The image is based on the `cnstark/pytorch:1.13.0-py3.9.12-cuda11.7.1-ubuntu20.04` image, and has all the dependencies installed. The Dockerfile used to build the image can be found in the `envs/docker` directory.
 
-To run the interactive session with the image, you can use the following command:
+You can also skip pulling the image since `docker` will pull it if needed. To run the interactive session with the image, you can use the following command:
 
 ```bash
 docker run --gpus all -it kzkedzierska/sc_foundation_evals
 ```
 
+If you want to be able to run the notebooks, run the image with the following tag:
+
+```bash
+ docker run --gpus all -it --rm -p 8888:8888 -v  ./:/workspace kzkedzierska/sc_foundation_evals:latest_notebook
+```
+
+And open the link provided in the terminal in your browser. It should look like this:
+
+```console
+[I 2024-08-23 22:15:13.015 ServerApp] Serving notebooks from local directory: /workspace
+[I 2024-08-23 22:15:13.015 ServerApp] Jupyter Server 2.14.2 is running at:
+[I 2024-08-23 22:15:13.015 ServerApp] http://localhost:8888/tree
+[I 2024-08-23 22:15:13.015 ServerApp] http://127.0.0.1:8888/tree
+```
+
+For running the command on the server, consult the documentation of the server provider on how to forward the ports properly.
+
 </details>
 
 ## Running the code
+
+### Downloading the weights
+
+To run notebooks you also need to have the weights of the models downloaded. scGPT weights are avaialble [here](https://github.com/bowang-lab/scGPT#pretrained-scgpt-model-zoo) and Geneformer weights are available in its repository. As per the instructions in the Geneformer repository, make sure you have `git lfs` installed before downloading the weights via repository cloning.
 
 ### Copying this repository
 
