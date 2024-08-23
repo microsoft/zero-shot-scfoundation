@@ -1,4 +1,6 @@
 #! /bin/bash
+# exit on error
+set -e
 
 _script_name=$(basename "$0")
 
