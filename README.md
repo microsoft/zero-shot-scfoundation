@@ -49,7 +49,7 @@ We recommend using [mamba](https://mamba.readthedocs.io/en/latest/user_guide/mam
 To simplify installation, we provide the installation script that creates a new conda environment with all the dependencies installed. You can run the following command to create the environment:
 
 ```bash
-bash envs/install.sh
+bash envs/installation.sh
 ```
 
 If the installation is successful, you will see the following message:
