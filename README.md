@@ -33,99 +33,28 @@ This code has been tested with the following versions of the packages:
 
 </details>
 
-## Installation
+## Quick Start (Docker - Recommended)
 
-Below you can find the instructions on how to install the dependencies for this project. We provide two options: using conda/mamba or using Docker.
-
-<details>
-<summary>Conda / Mamba</summary>
-
-### Conda / Mamba
-
-You can install the dependencies using conda. To do so, you need to have conda installed on your machine. If you don't have it, you can install it from [here](https://docs.conda.io/en/latest/miniconda.html).
-
-We recommend using [mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html), since it is faster in our experience. You can install mamba following the guide [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html#operating-system-package-managers).
-
-To simplify installation, we provide the installation script that creates a new conda environment with all the dependencies installed. You can run the following command to create the environment:
+**Prerequisites:** Docker with GPU support
 
 ```bash
-bash envs/installation.sh
-```
-
-If the installation is successful, you will see the following message:
-
-```console
-2024-08-22 19:49:26 SUCCESS: All packages installed successfully.
-```
-
-And you can activate the environment by running:
-
-```bash
-conda activate sc_foundation_evals
-```
-
-</details>
-
-<details>
-<summary>Docker</summary>
-
-### Docker
-
-The docker image is available on DockerHub [here](https://hub.docker.com/repository/docker/kzkedzierska/sc_foundation_evals/general). You can pull the image by running:
-
-```bash
-docker pull kzkedzierska/sc_foundation_evals
-```
-
-The image is based on the `cnstark/pytorch:1.13.0-py3.9.12-cuda11.7.1-ubuntu20.04` image, and has all the dependencies installed. The Dockerfile used to build the image can be found in the `envs/docker` directory.
-
-You can also skip pulling the image since `docker` will pull it if needed. To run the interactive session with the image, you can use the following command:
-
-```bash
-docker run --gpus all -it kzkedzierska/sc_foundation_evals
-```
-
-If you want to be able to run the notebooks, run the image with the following tag:
-
-```bash
- docker run --gpus all -it --rm -p 8888:8888 -v  ./:/workspace kzkedzierska/sc_foundation_evals:latest_notebook
-```
-
-And open the link provided in the terminal in your browser. It should look like this:
-
-```console
-[I 2024-08-23 22:15:13.015 ServerApp] Serving notebooks from local directory: /workspace
-[I 2024-08-23 22:15:13.015 ServerApp] Jupyter Server 2.14.2 is running at:
-[I 2024-08-23 22:15:13.015 ServerApp] http://localhost:8888/tree
-[I 2024-08-23 22:15:13.015 ServerApp] http://127.0.0.1:8888/tree
-```
-
-For running the command on the server, consult the documentation of the server provider on how to forward the ports properly.
-
-</details>
-
-## Running the code
-
-### Downloading the weights
-
-To run notebooks you also need to have the weights of the models downloaded. scGPT weights are avaialble [here](https://github.com/bowang-lab/scGPT#pretrained-scgpt-model-zoo) and Geneformer weights are available in its repository. As per the instructions in the Geneformer repository, make sure you have `git lfs` installed before downloading the weights via repository cloning.
-
-### Copying this repository
-
-To run the code, you need to clone this repository.
-
-```bash
+# Clone repository and get data
 git clone https://github.com/microsoft/zero-shot-scfoundation
-```
-
-And download and unpack the data, stored at figshare (see [here](https://doi.org/10.6084/m9.figshare.24747228) for more details).
-
-```bash
 cd zero-shot-scfoundation
-# download and unpack the data
 wget https://figshare.com/ndownloader/files/43480497 -O data.zip
 unzip data.zip && rm data.zip
+
+# Start Jupyter notebooks
+docker-compose up jupyter
+# Or use the convenience script
+./run_jupyter.sh
 ```
+
+Open <http://localhost:8888> to access Jupyter notebooks.
+
+**📋 For detailed installation options and troubleshooting, see [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)**
+
+## Running the code
 
 ### Notebooks
 

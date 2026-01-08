@@ -34,6 +34,49 @@ docker build -t sc_foundation_jupyter:latest .
 docker run -it --rm --gpus all -p 8888:8888 -v $(pwd):/workspace sc_foundation_jupyter:latest
 ```
 
+### Mounting Additional Data Directories
+
+By default, only the project directory is mounted at `/workspace`. To access datasets or files outside the project:
+
+#### Option 1: Modify run_jupyter.sh
+
+```bash
+# Edit run_jupyter.sh to add additional volume mounts
+docker run -it --rm \
+    --gpus all \
+    -p 8888:8888 \
+    -v "$(pwd)":/workspace \
+    -v ~/.huggingface:/root/.huggingface \
+    -v /path/to/your/datasets:/data \
+    -v /path/to/additional/files:/mnt/files \
+    sc_foundation_jupyter:latest
+```
+
+#### Option 2: Add to `docker-compose.yml`
+
+```yaml
+volumes:
+  - .:/workspace
+  - ~/.huggingface:/root/.huggingface
+  - /path/to/your/datasets:/data
+  - /path/to/additional/files:/mnt/files
+```
+
+#### Option 3: One-time manual run
+
+```bash
+docker run -it --rm --gpus all -p 8888:8888 \
+  -v $(pwd):/workspace \
+  -v /absolute/path/to/data:/data \
+  sc_foundation_jupyter:latest
+```
+
+**Access mounted data in notebooks:**
+
+- Project files: `/workspace/`
+- Additional data: `/data/` (or whatever you mounted it as)
+- Files are read/write accessible from within the container
+
 ## Local Installation (Not Recommended for HF Models)
 
 If you need to install locally, you'll need to manually install the HuggingFace models:
