@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   jupyter:
-    image: kzkedzierska/sc_foundation_evals:latest_jupyter
+    image: kzkedzierska/sc_foundation_evals:latest_notebook
     # Fallback: uncomment build section if pre-built image is not available
     # build: 
     #   context: .

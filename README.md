@@ -10,12 +10,14 @@ In this project, we assess two proposed foundation models in the context of sing
 
 ## Dependencies
 
-Currently the code requires the GPUs supported by flash attention, required for scGPT to run.
+This code has been developed and tested on Linux systems with NVIDIA GPUs.
 
-GPUs supported by flash attention are:
+**Compatible GPUs:**
 
-- Ampere, Ada, or Hopper GPUs (e.g., A100, RTX 3090, RTX 4090, H100).
-- Turing GPUs (T4, RTX 2080)
+- **Ampere, Ada, or Hopper**: A100, RTX 3090, RTX 4090, H100
+- **Turing**: T4, RTX 2080
+
+The code requires flash-attention for scGPT, which has strict GPU requirements.
 
 <details>
 <summary>Packages version</summary>
@@ -37,6 +39,7 @@ This code has been tested with the following versions of the packages:
 
 **Prerequisites:**
 
+- **CUDA-compatible NVIDIA GPU** (see Dependencies section above)
 - Docker with GPU support ([Installation Guide](https://docs.docker.com/get-docker/))
 - NVIDIA Container Toolkit for GPU access ([Setup Guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html))
 
@@ -55,7 +58,7 @@ docker-compose up jupyter
 ./run_jupyter.sh
 ```
 
-**Note:** This automatically pulls the pre-built Docker image `kzkedzierska/sc_foundation_evals:latest_jupyter` from Docker Hub.
+**Note:** This automatically pulls the pre-built Docker image `kzkedzierska/sc_foundation_evals:latest_notebook` from Docker Hub.
 
 Open <http://localhost:8888> to access Jupyter notebooks.
 

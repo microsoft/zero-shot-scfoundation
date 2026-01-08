@@ -92,7 +92,6 @@ pip install git+https://huggingface.co/ctheodoris/Geneformer.git@5d0082c1e188ab8
 
 ## Why Docker?
 
-1. **HF Model Management**: HuggingFace models shouldn't be in requirements.txt per best practices
-2. **Reproducibility**: Exact environment with proper CUDA/PyTorch versions
-3. **Isolation**: No conflicts with your local Python environment
-4. **GPU Support**: Properly configured CUDA environment
+1. **Reproducibility**: Exact environment with proper CUDA/PyTorch versions
+2. **Isolation**: No conflicts with your local Python environment
+3. **GPU Support**: Properly configured CUDA environment
