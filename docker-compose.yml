@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  jupyter:
+    build: 
+      context: .
+      dockerfile: envs/docker/jupyter/Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/workspace
+      - ~/.huggingface:/root/.huggingface  # Optional: Mount HuggingFace cache to avoid re-downloading models
+    environment:
+      - CUDA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    working_dir: /workspace
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
+
+  # Optional: Development container without Jupyter
+  dev:
+    build: 
+      context: .
+      dockerfile: envs/docker/base_image/Dockerfile
+    volumes:
+      - .:/workspace
+      - ~/.huggingface:/root/.huggingface  # Optional: Mount HuggingFace cache to avoid re-downloading models
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
