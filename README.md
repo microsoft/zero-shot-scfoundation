@@ -35,7 +35,12 @@ This code has been tested with the following versions of the packages:
 
 ## Quick Start (Docker - Recommended)
 
-**Prerequisites:** Docker with GPU support
+**Prerequisites:**
+
+- Docker with GPU support ([Installation Guide](https://docs.docker.com/get-docker/))
+- NVIDIA Container Toolkit for GPU access ([Setup Guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html))
+
+**Note:** If you're using Docker in a non-privileged environment (clusters, shared systems), make sure your user is in the `docker` group or Docker is configured for rootless operation. See [Docker post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/) for details.
 
 ```bash
 # Clone repository and get data
@@ -49,6 +54,8 @@ docker-compose up jupyter
 # Or use the convenience script
 ./run_jupyter.sh
 ```
+
+**Note:** This automatically pulls the pre-built Docker image `kzkedzierska/sc_foundation_evals:latest_jupyter` from Docker Hub.
 
 Open <http://localhost:8888> to access Jupyter notebooks.
 

@@ -2,9 +2,11 @@ version: '3.8'
 
 services:
   jupyter:
-    build: 
-      context: .
-      dockerfile: envs/docker/jupyter/Dockerfile
+    image: kzkedzierska/sc_foundation_evals:latest_jupyter
+    # Fallback: uncomment build section if pre-built image is not available
+    # build: 
+    #   context: .
+    #   dockerfile: envs/docker/jupyter/Dockerfile
     ports:
       - "8888:8888"
     volumes:
@@ -24,9 +26,11 @@ services:
 
   # Optional: Development container without Jupyter
   dev:
-    build: 
-      context: .
-      dockerfile: envs/docker/base_image/Dockerfile
+    image: kzkedzierska/sc_foundation_evals:latest
+    # Fallback: uncomment build section if pre-built image is not available  
+    # build: 
+    #   context: .
+    #   dockerfile: envs/docker/base_image/Dockerfile
     volumes:
       - .:/workspace
       - ~/.huggingface:/root/.huggingface  # Optional: Mount HuggingFace cache to avoid re-downloading models
