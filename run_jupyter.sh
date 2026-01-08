@@ -13,9 +13,9 @@ fi
 
 # Try to pull the Docker image first, build as fallback
 echo "Attempting to pull pre-built Docker image..."
-if docker pull kzkedzierska/sc_foundation_evals:latest_jupyter &> /dev/null; then
+if docker pull kzkedzierska/sc_foundation_evals:latest_notebook &> /dev/null; then
     echo "Using pre-built Docker image"
-    IMAGE_NAME="kzkedzierska/sc_foundation_evals:latest_jupyter"
+    IMAGE_NAME="kzkedzierska/sc_foundation_evals:latest_notebook"
 else
     echo "Pre-built image not available, building locally..."
     
